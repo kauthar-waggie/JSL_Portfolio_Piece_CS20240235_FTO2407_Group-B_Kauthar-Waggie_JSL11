@@ -80,7 +80,7 @@ function displayBoards(boards) {
 // TASK: Fix Bugs
 function filterAndDisplayTasksByBoard(boardName) {
   const tasks = getTasks(); // Fetch tasks from a simulated local storage function
-  const filteredTasks = tasks.filter(task => task.board = boardName);
+  const filteredTasks = tasks.filter(task => task.board === boardName); //added here ==
 
   // Ensure the column titles are set outside of this function or correctly initialized before this function runs
 
@@ -93,16 +93,19 @@ function filterAndDisplayTasksByBoard(boardName) {
                         </div>`;
 
     const tasksContainer = document.createElement("div");
+    tasksContainer.classList.add('tasks-container'); // added here classlist
     column.appendChild(tasksContainer);
 
-    filteredTasks.filter(task => task.status = status).forEach(task => { 
+    filteredTasks
+    .filter(task => task.status === status) //added here === and correct format
+    .forEach(task => { 
       const taskElement = document.createElement("div");
       taskElement.classList.add("task-div");
       taskElement.textContent = task.title;
       taskElement.setAttribute('data-task-id', task.id);
 
       // Listen for a click event on each task and open a modal
-      taskElement.click() => { 
+      taskElement.addEventListener('click', () => { //added here eventlistener
         openEditTaskModal(task);
       });
 
@@ -122,10 +125,9 @@ function styleActiveBoard(boardName) {
   document.querySelectorAll('.board-btn').foreach(btn => { 
     
     if(btn.textContent === boardName) {
-      btn.add('active') 
-    }
-    else {
-      btn.remove('active'); 
+      btn.classList.add('active'); //added here classlist
+    }else { // fixed the structure here 
+      btn.classList.remove('active'); //added classlist
     }
   });
 }
@@ -140,7 +142,7 @@ function addTaskToUI(task) {
 
   let tasksContainer = column.querySelector('.tasks-container');
   if (!tasksContainer) {
-    console.warn(`Tasks container not found for status: ${task.status}, creating one.`);
+    //console.warn(`Tasks container not found for status: ${task.status}, creating one.`);
     tasksContainer = document.createElement('div');
     tasksContainer.className = 'tasks-container';
     column.appendChild(tasksContainer);
@@ -151,7 +153,7 @@ function addTaskToUI(task) {
   taskElement.textContent = task.title; // Modify as needed
   taskElement.setAttribute('data-task-id', task.id);
   
-  tasksContainer.appendChild(); 
+  tasksContainer.appendChild(taskElement); //added taskElement 
 }
 
 
@@ -159,7 +161,7 @@ function addTaskToUI(task) {
 function setupEventListeners() {
   // Cancel editing task event listener
   const cancelEditBtn = document.getElementById('cancel-edit-btn');
-  cancelEditBtn.click() => toggleModal(false, elements.editTaskModal));
+  cancelEditBtn.addEventListener('click', () => toggleModal(false, elements.editTaskModal)); //added event listener
 
   // Cancel adding new task event listener
   const cancelAddTaskBtn = document.getElementById('cancel-add-task-btn');
@@ -175,11 +177,11 @@ function setupEventListeners() {
   });
 
   // Show sidebar event listener
-  elements.hideSideBarBtn.click() => toggleSidebar(false));
-  elements.showSideBarBtn.click() => toggleSidebar(true));
+  elements.hideSideBarBtn.addEventListener('click',() => toggleSidebar(false)); //added El
+  elements.showSideBarBtn.addEventListener('click',() => toggleSidebar(true)); // added EL
 
   // Theme switch event listener
-  elements.themeSwitch.addEventListener('change', toggleTheme);
+  elements.themeToggle.addEventListener('change', toggleTheme); // ADDED TOGGLE instead of switch
 
   // Show Add New Task Modal event listener
   elements.createNewTaskBtn.addEventListener('click', () => {
@@ -196,7 +198,7 @@ function setupEventListeners() {
 // Toggles tasks modal
 // Task: Fix bugs
 function toggleModal(show, modal = elements.modalWindow) {
-  modal.style.display = show ? 'block' => 'none'; 
+  modal.style.display = show ? 'block' : 'none'; // added :
 }
 
 /*************************************************************************************************************************************************
