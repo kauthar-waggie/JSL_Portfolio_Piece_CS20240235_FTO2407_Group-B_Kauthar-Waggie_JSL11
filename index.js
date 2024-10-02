@@ -1,5 +1,7 @@
 // TASK: import helper functions from utils
+import { loadData, saveData, toggleSidebar, handleThemeSwitch, createNewTask } from 'utils/taskFunctions.js';
 // TASK: import initialData
+import initialData from 'initialData.js';
 
 
 /*************************************************************************************************************************************************
@@ -11,27 +13,42 @@ function initializeData() {
   if (!localStorage.getItem('tasks')) {
     localStorage.setItem('tasks', JSON.stringify(initialData)); 
     localStorage.setItem('showSideBar', 'true')
+    console.log('Initial data loaded into localStorage'); //added this 
   } else {
     console.log('Data already exists in localStorage');
   }
 }
 
 // TASK: Get elements from the DOM
-const elements = {
+const elements = { //added here
+  sidebar: document.getElementById('side-bar-div'),
+  boardsNavLinksDiv: document.getElementById('boards-nav-links-div'),
+  themeToggle: document.getElementById('switch'),
+  hideSidebarBtn: document.getElementById('hide-side-bar-btn'),
+  showSidebarBtn: document.getElementById('show-side-bar-btn'),
+  addNewTaskBtn: document.getElementById('add-new-task-btn'),
+  taskContainers: document.querySelectorAll('.tasks-container'),
+  headerBoardName: document.getElementById('header-board-name'),
+  filterDiv: document.getElementById('filter-div'),
+  modalWindow: document.getElementById('modal-window'),
+  editTaskModal: document.getElementById('edit-task-modal')
+};
 
-}
-
-let activeBoard = ""
+let activeBoard = "";
 
 // Extracts unique board names from tasks
 // TASK: FIX BUGS
 function fetchAndDisplayBoardsAndTasks() {
-  const tasks = getTasks();
+  const tasks = getTasks(); // This retrieve tasks from localStorage
+  if (tasks.length === 0) {
+    console.log('No tasks available');
+    return; // Early return if there are no tasks
+  }
   const boards = [...new Set(tasks.map(task => task.board).filter(Boolean))];
   displayBoards(boards);
   if (boards.length > 0) {
     const localStorageBoard = JSON.parse(localStorage.getItem("activeBoard"))
-    activeBoard = localStorageBoard ? localStorageBoard ;  boards[0]; 
+    activeBoard = localStorageBoard ? localStorageBoard :  boards[0]; // fixed the semicolon to :
     elements.headerBoardName.textContent = activeBoard
     styleActiveBoard(activeBoard)
     refreshTasksUI();
@@ -41,19 +58,19 @@ function fetchAndDisplayBoardsAndTasks() {
 // Creates different boards in the DOM
 // TASK: Fix Bugs
 function displayBoards(boards) {
-  const boardsContainer = document.getElementById("boards-nav-links-div");
+  const boardsContainer = elements.boardsNavLinksDiv; //added here
   boardsContainer.innerHTML = ''; // Clears the container
   boards.forEach(board => {
     const boardElement = document.createElement("button");
     boardElement.textContent = board;
     boardElement.classList.add("board-btn");
-    boardElement.click()  { 
+    boardElement.addEventListener('click', () => { // added here a event listener
       elements.headerBoardName.textContent = board;
       filterAndDisplayTasksByBoard(board);
       activeBoard = board //assigns active board
       localStorage.setItem("activeBoard", JSON.stringify(activeBoard))
       styleActiveBoard(activeBoard)
-    };
+    });
     boardsContainer.appendChild(boardElement);
   });
 
