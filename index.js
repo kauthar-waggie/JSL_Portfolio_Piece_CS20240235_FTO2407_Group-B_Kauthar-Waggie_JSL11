@@ -301,6 +301,16 @@ function toggleSidebar(show) {
 function toggleTheme() {
   const isLightTheme = document.body.classList.toggle('light-theme');
   localStorage.setItem('light-theme', isLightTheme ? 'enabled' : 'disabled');
+
+  const logoElement = document.getElementById('logo');
+  if (isLightTheme) {
+    logoElement.src = './assets/logo-light.svg'; 
+  } else {
+    logoElement.src = './assets/logo-dark.svg';
+  }
+
+  const toggleInput = document.getElementById('label-checkbox-theme');
+  toggleInput.checked = isLightTheme; // Set the checkbox based on the current theme
 }
 
 function openEditTaskModal(task) {
@@ -317,7 +327,7 @@ function openEditTaskModal(task) {
 
   // Call saveTaskChanges upon click of Save Changes button
   saveTaskChangesBtn.addEventListener('click', () => saveTaskChanges(task));
-  saveTaskChangesBtn.onclick = null; // Clear previous listener
+  saveTaskChangesBtn.onclick = null; // This clear previous listener
  
 
   // Delete task using a helper function and close the task modal
@@ -366,5 +376,7 @@ function init() {
   toggleSidebar(showSidebar);
   const isLightTheme = localStorage.getItem('light-theme') === 'enabled';
   document.body.classList.toggle('light-theme', isLightTheme);
+  const toggleInput = document.getElementById('label-checkbox-theme');
+  toggleInput.checked = isLightTheme;
   fetchAndDisplayBoardsAndTasks(); // Initial display of boards and tasks
 }

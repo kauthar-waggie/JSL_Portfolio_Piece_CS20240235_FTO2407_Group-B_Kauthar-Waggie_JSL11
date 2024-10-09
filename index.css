@@ -1,4 +1,5 @@
 /* index.css */
+/* index.css */
 *,
 *::before,
 *::after {
@@ -207,6 +208,7 @@ h4 {
 
 #logo {
   width: 90%;
+  
 }
 
 header {
@@ -769,9 +771,12 @@ input[type="checkbox"] {
   left: 5px;
   width: 14px;
   height: 14px;
-  background: #fff;
+  background: #ffffff;
   border-radius: 90px;
   transition: 0.3s;
+  left: 5px;
+  transform: translateX(0);
+
 }
 
 input:checked + #label-checkbox-theme {
@@ -781,6 +786,7 @@ input:checked + #label-checkbox-theme {
 input:checked + #label-checkbox-theme:after {
   left: calc(100% - 5px);
   transform: translateX(-100%);
+  position: absolute;
 }
 
 #label-checkbox-theme:active:after {
