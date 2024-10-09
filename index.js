@@ -241,7 +241,9 @@ function addTaskToUI(task) {
 function setupEventListeners() {
   // Cancel editing task event listener
   const cancelEditBtn = document.getElementById('cancel-edit-btn');
-  cancelEditBtn.addEventListener('click', () => toggleModal(false, elements.editTaskModal)); //added event listener
+  cancelEditBtn.addEventListener('click', () => {
+    toggleModal(false, elements.editTaskModalWindow); //THIS cancels the editing button
+  });
 
   // Cancel adding new task event listener
   const cancelAddTaskBtn = document.getElementById('cancel-add-task-btn');
@@ -337,13 +339,18 @@ function openEditTaskModal(task) {
 
   // Get button elements from the task modal
   const saveChangesBtn = elements.saveTaskChangesBtn;
-  saveChangesBtn.onclick = null; // Clear previous listener 
+  saveChangesBtn.onclick = null; // Clear previous listener
+   
 
-  const newSaveBtn = saveChangesBtn.cloneNode(true);
-  saveChangesBtn.replaceWith(newSaveBtn);
+  //const newSaveBtn = saveChangesBtn.cloneNode(true);
+  //saveChangesBtn.replaceWith(newSaveBtn);
 
   // Call saveTaskChanges upon click of Save Changes button
-  saveChangesBtn.addEventListener('click', () => saveTaskChanges(task.id));
+  const saveTaskChangesBtn = elements.saveTaskChangesBtn;
+  saveTaskChangesBtn.onclick = () => {
+    saveTaskChanges(task.id); // Call function to save task changes
+    toggleModal(false, elements.editTaskModalWindow); // Close the modal after saving
+  };
  
 
   // Delete task using a helper function and close the task modal
