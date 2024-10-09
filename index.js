@@ -32,7 +32,6 @@ initializeData();
     logo: document.getElementById('logo'),
     boardsNavLinksDiv: document.getElementById('boards-nav-links-div'),
     headlineSidepanel: document.getElementById('headline-sidepanel'),
-    //sideBarBottom: document.getElementsByClassName('side-bar-bottom'),
     toggleDiv: document.querySelector('.toggle-div'),
     iconDarkTheme: document.getElementById('icon-dark'),
     themeToggle: document.getElementById('switch'),
@@ -51,7 +50,6 @@ initializeData();
     dropDownIcon: document.getElementById('dropDownIcon'),
     addNewTaskBtn: document.getElementById('add-new-task-btn'),
     editBoardBtn: document.getElementById('edit-board-btn'),
-    //boardBtn: document.querySelectorAll('.board-btn'),
     threeDotsIcon: document.getElementById('three-dots-icon'),
     editBoardDiv: document.getElementById('editBoardDiv'),
     deleteBoardBtn: document.getElementById('deleteBoardBtn'),
@@ -65,8 +63,6 @@ initializeData();
     toDoText: document.getElementById('toDoText'),
     todoTasksContainer: document.querySelector('.task-container'),
     modalWindow: document.getElementById('new-task-modal-window'),
-    //editTaskModal: document.getElementById('edit-task-modal'), 
-    //todoHeadDiv: document.getElementById('todo-head-div'),
 
     doingColumn: document.querySelector('div[data-status="doing"]'),
     doingHeadDiv: document.getElementById('doing-head-div'),
@@ -79,15 +75,7 @@ initializeData();
     doneDot: document.getElementById('done-dot'),
     doneText: document.getElementById('doneText'),
     doneTasksContainer: document.querySelector('.task-container'),
-   // tasksContainer: document.getElementsByClassName('tasks-container'),
-    //doingHeadDiv: document.getElementById('doing-head-div'),
-    //doingDot: document.getElementById('doing-dot'),
-    //doingText: document.getElementById('doingText'),
-    //doneHeadDiv: document.getElementById('done-head-div'),
-    //doneDot: document.getElementById('done-dot'),
-    //doneText: document.getElementById('doneText'),
-    //columnHeader: document.getElementsByClassName('columnHeader'),
-
+ 
     newTaskModalWindow: document.getElementById('new-task-modal-window'),
     modalTitleInput: document.getElementById('modal-title-input'),
     titleInput: document.getElementById('title-input'),
@@ -98,11 +86,6 @@ initializeData();
     createTaskBtn: document.getElementById('create-task-btn'),
     cancelAddTaskBtn: document.getElementById('cancel-add-task-btn'),
 
-    //modalTitle: document.getElementsByClassName('modal-title'),
-    //inputDiv: document.querySelectorAll('.input-div'),
-    //buttonGroup: document.getElementsByClassName('button-group'),
-    
-    
     editTaskModalWindow: document.querySelector('.edit-task-modal-window'),
     editTaskForm: document.getElementById('edit-task-form'),
     editTaskHeader: document.getElementById('edit-task-header'),
@@ -115,14 +98,6 @@ initializeData();
     deleteTaskBtn: document.getElementById('delete-task-btn'),
     columnDivs: document.querySelectorAll('.column-div'),
     filterDiv: document.getElementById('filterDiv'),
-
-    //editTaskDiv: document.querySelectorAll('.edit-task-div'),
-    //labelModalWindow: document.getElementsByClassName('label-modal-window'),
-    //editTaskDivButtonGroup: document.getElementsByClassName('edit-task-div button-group'),
-   // taskDiv: document.getElementsByClassName('task-div'),
-   // dataTaskId: document.getElementById('data-task-id'),
-
-    
   }
 let activeBoard = ""
 
@@ -134,7 +109,7 @@ function fetchAndDisplayBoardsAndTasks() {
   displayBoards(boards);
   if (boards.length > 0) {
     const localStorageBoard = JSON.parse(localStorage.getItem("activeBoard"));
-    activeBoard = localStorageBoard ? localStorageBoard :  boards[0]; // fixed the semicolon to ||
+    activeBoard = localStorageBoard ? localStorageBoard :  boards[0]; // fixed the ||
     elements.headerBoardName.textContent = activeBoard;
     styleActiveBoard(activeBoard);
     refreshTasksUI();
@@ -222,7 +197,6 @@ function addTaskToUI(task) {
 
   let tasksContainer = column.querySelector('.tasks-container');
   if (!tasksContainer) {
-    //console.warn(`Tasks container not found for status: ${task.status}, creating one.`);
     tasksContainer = document.createElement('div');
     tasksContainer.classList.add('tasks-container');
     column.appendChild(tasksContainer);
@@ -324,7 +298,6 @@ function toggleSidebar(show) {
 }
 
 
-
 function toggleTheme() {
   const isLightTheme = document.body.classList.toggle('light-theme');
   localStorage.setItem('light-theme', isLightTheme ? 'enabled' : 'disabled');
@@ -338,39 +311,31 @@ function openEditTaskModal(task) {
   elements.editSelectStatus.value = task.status;
 
   // Get button elements from the task modal
-  const saveChangesBtn = elements.saveTaskChangesBtn;
-  saveChangesBtn.onclick = null; // Clear previous listener
-   
+  const saveTaskChangesBtn = elements.saveTaskChangesBtn;
+  const deleteTaskBtn = elements.deleteTaskBtn;
 
-  //const newSaveBtn = saveChangesBtn.cloneNode(true);
-  //saveChangesBtn.replaceWith(newSaveBtn);
 
   // Call saveTaskChanges upon click of Save Changes button
-  const saveTaskChangesBtn = elements.saveTaskChangesBtn;
-  saveTaskChangesBtn.onclick = () => {
-    saveTaskChanges(task.id); // Call function to save task changes
-    toggleModal(false, elements.editTaskModalWindow); // Close the modal after saving
-  };
+  saveTaskChangesBtn.addEventListener('click', () => saveTaskChanges(task));
+  saveTaskChangesBtn.onclick = null; // Clear previous listener
  
 
   // Delete task using a helper function and close the task modal
-  const deleteTaskBtn = elements.deleteTaskBtn;
   deleteTaskBtn.onclick = () => {
     deleteTask(task.id);
     refreshTasksUI();
-    toggleModal(false, elements.editTaskModalWindow); // Close modal after deletion
+    toggleModal(false, elements.editTaskModalWindow); // modal closes after delete
   };
 
   toggleModal(true, elements.editTaskModalWindow); // Show the modal
 }
 
-function saveTaskChanges(taskId) {
+function saveTaskChanges(task) {
   // Get new user inputs
   const updatedTask = {
-    id: taskId,
-    title: elements.editTaskTitleInput.value.trim(),  // Trim to remove any extra spaces
-    description: elements.editTaskDescInput.value.trim(),
-    status: elements.editSelectStatus.value
+    title: elements.editTaskTitleInput.value,
+    description: elements.editTaskDescInput.value,
+    status: elements.editSelectStatus.value,
   };
 
   // Create an object with the updated task details
@@ -381,12 +346,11 @@ function saveTaskChanges(taskId) {
 
 
   // Update task using a hlper functoin
-  patchTask(updatedTask);
+  patchTask(task.id, updatedTask);
 
 
   // Close the modal and refresh the UI to reflect the changes
- // toggleModal(false, elements.editTaskModalWindow);
-  closeModal();
+  toggleModal(false, elements.editTaskModalWindow); // Close the modal after saving
   refreshTasksUI();
 }
 
